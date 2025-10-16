@@ -224,7 +224,7 @@ Chi-cuadrado de independencia por periodo:
 - Bosa: 86.3% (n=423)
 
 **Requieren atención:**
-- Los Mártires: 54.2% (n=118) ⚠️ **crítico**
+- Los Mártires: 54.2% (n=118) **crítico**
 - Santa Fe: 75.2% (n=121)
 - Candelaria: 76.9% (n=186)
 
@@ -236,7 +236,7 @@ Chi-cuadrado de independencia por periodo:
 
 ---
 
-## 📊 Salidas del Proyecto
+## Salidas del Proyecto
 
 ### Datos Procesados
 - `data/processed/base_clean.parquet` - Dataset limpio (56,473 × 48)
