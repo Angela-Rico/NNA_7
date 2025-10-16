@@ -244,14 +244,6 @@ Chi-cuadrado de independencia por periodo:
 - `data/processed/factor_scores.parquet` - Scores de 10 componentes principales
 - `data/processed/cluster_assign.parquet` - Asignación de clusters (k=4)
 
-### Visualizaciones Clave
-
-| Análisis | Visualización |
-|----------|---------------|
-| **PCA** | ![Scree](reports/figures/scree_pca.png) |
-| **Clustering** | ![Clusters 2D](reports/figures/clusters_2d.png) |
-| **Selección k** | ![Métricas](reports/figures/clustering_analysis.png) |
-
 ### Reportes de Análisis
 - `reports/data_summary.txt` - Resumen de datos y conteos territoriales
 - `reports/data_dictionary.csv` - Diccionario de 46 variables
