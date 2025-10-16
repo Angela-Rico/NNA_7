@@ -79,9 +79,11 @@ python src/04_clustering.py
 pip install pandas numpy matplotlib seaborn scikit-learn pyarrow openpyxl
 ```
 
-## 👥 Autor
+## Autores
 
-Angela Rico - Análisis de datos NNA
+Angela Rico 
+Carlos Diaz
+Diego Gomez
 
 ## 📝 Licencia
 
