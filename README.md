@@ -1,6 +1,6 @@
-# 🎯 Análisis de Datos NNA (Niños, Niñas y Adolescentes) - Trabajo Infantil en Bogotá
+# Análisis de Datos NNA (Niños, Niñas y Adolescentes) - Trabajo Infantil en Bogotá
 
-## 📋 Resumen Ejecutivo
+## Resumen Ejecutivo
 
 Proyecto de análisis de datos sobre el Programa de Identificación y Desvinculación de Niñas, Niños y Adolescentes (NNA) de la Actividad Laboral de la Secretaría Distrital de Salud de Bogotá (2013-2025). El análisis utiliza la metodología **CRISP-DM** para caracterizar perfiles, identificar patrones territoriales y medir tasas de desvinculación del trabajo infantil.
 
@@ -8,7 +8,7 @@ Proyecto de análisis de datos sobre el Programa de Identificación y Desvincula
 
 ---
 
-## 🗂️ Estructura del Proyecto
+## Estructura del Proyecto
 ```
 NNA_7/
 ├── data/
@@ -36,7 +36,7 @@ NNA_7/
 
 ---
 
-## 🎯 Objetivos del Análisis
+## Objetivos del Análisis
 
 ### Objetivo Principal
 Medir la **prevalencia programática de desvinculación** por periodo y territorio, y explicar los factores asociados a la permanencia en trabajo infantil tras la primera intervención.
@@ -49,9 +49,9 @@ Medir la **prevalencia programática de desvinculación** por periodo y territor
 
 ---
 
-## 📊 Metodología CRISP-DM
+## Metodología CRISP-DM
 
-### 1️⃣ Comprensión del Negocio
+### 1️. Comprensión del Negocio
 
 **Contexto:** Programa de la Secretaría Distrital de Salud de Bogotá para identificar y desvincular NNA del trabajo infantil mediante búsqueda activa en espacios públicos y articulación interinstitucional (ICBF, Subredes de Salud).
 
@@ -68,7 +68,7 @@ Medir la **prevalencia programática de desvinculación** por periodo y territor
 - Tiempo a cierre: mediana en días
 - Prevalencia territorial: con IC 95% Wilson
 
-### 2️⃣ Comprensión de los Datos
+### 2️. Comprensión de los Datos
 
 **Fuente:** `Data_Limpia.xlsx` (base operativa depurada)
 
@@ -90,7 +90,7 @@ Medir la **prevalencia programática de desvinculación** por periodo y territor
 - Tratamiento de NA: código 99999 → `NA`
 - Duplicados: consolidados por `id_fic` + `fecha_intervencion`
 
-### 3️⃣ Preparación de Datos
+### 3️. Preparación de Datos
 
 #### Limpieza y normalización
 ```python
@@ -127,7 +127,7 @@ Prioridad 3: "desvinculado" → invertir (1=desvinculado → trabaja=0; 0=no des
 - Variables procesadas: 21 numéricas + categóricas codificadas
 - Imputación: mediana para numéricas
 
-### 4️⃣ Modelado
+### 4️ Modelado
 
 #### **Análisis de Componentes Principales (PCA)**
 
@@ -148,7 +148,9 @@ Prioridad 3: "desvinculado" → invertir (1=desvinculado → trabaja=0; 0=no des
 
 **Hallazgo clave:** La edad **no** es el principal eje de variación. El contexto socioeconómico y operativo explica más varianza que la edad individual.
 
-**Archivos:** `reports/pca_explained_variance.csv`, `reports/factor_loadings.csv`, `reports/figures/scree_pca.png`
+![Scree Plot - Varianza Explicada PCA](reports/figures/scree_pca.png)
+
+**Archivos:** `reports/pca_explained_variance.csv`, `reports/factor_loadings.csv`
 
 #### **Clustering: K-Medoids**
 
@@ -172,9 +174,13 @@ Prioridad 3: "desvinculado" → invertir (1=desvinculado → trabaja=0; 0=no des
 
 **Interpretación:** Los clusters con mejor desempeño (C1, C3) tienen 6-8 puntos porcentuales más de desvinculación que C0. Esto sugiere **perfiles diferenciados** que responden mejor a la intervención.
 
-**Archivos:** `reports/clustering_report.txt`, `reports/figures/clusters_2d.png`
+![Clusters en Espacio 2D](reports/figures/clusters_2d.png)
 
-### 5️⃣ Evaluación y Resultados
+![Análisis de Clustering](reports/figures/clustering_analysis.png)
+
+**Archivos:** `reports/clustering_report.txt`, `reports/clustering_metrics.csv`
+
+### 5️. Evaluación y Resultados
 
 #### **Prevalencias Territoriales**
 
@@ -199,12 +205,12 @@ Chi-cuadrado de independencia por periodo:
 
 **MARZO 2023 - NOVIEMBRE 2024:**
 
-**✅ Mejor desempeño:**
+**Mejor desempeño:**
 - Usme: 94.9% (n=1,358)
 - Engativá: 92.4% (n=1,318)
 - Suba: 92.3% (n=1,883)
 
-**⚠️ Requieren atención:**
+**Requieren atención:**
 - Rafael Uribe Uribe: 64.3% (n=1,394)
 - Candelaria: 67.0% (n=197)
 - San Cristóbal: 68.1% (n=1,268)
@@ -212,13 +218,13 @@ Chi-cuadrado de independencia por periodo:
 
 **DICIEMBRE 2024 - MARZO 2025:**
 
-**✅ Mejor desempeño:**
+**Mejor desempeño:**
 - Usme: 100.0% (n=105)
 - Engativá: 94.5% (n=109)
 - Bosa: 86.3% (n=423)
 
-**⚠️ Requieren atención:**
-- Los Mártires: 54.2% (n=118)  **crítico**
+**Requieren atención:**
+- Los Mártires: 54.2% (n=118) ⚠️ **crítico**
 - Santa Fe: 75.2% (n=121)
 - Candelaria: 76.9% (n=186)
 
@@ -230,69 +236,6 @@ Chi-cuadrado de independencia por periodo:
 
 ---
 
-## 🚀 Uso del Proyecto
-
-### Instalación
-```bash
-# Clonar repositorio
-git clone https://github.com/Angela-Rico/NNA_7.git
-cd NNA_7
-
-# Crear entorno virtual
-python3 -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
-
-# Instalar dependencias
-pip install -r requirements.txt
-```
-
-### Ejecución con Makefile
-```bash
-# Ver comandos disponibles
-make help
-
-# Ejecutar pipeline completo
-make run
-
-# Ejecutar análisis individual
-make E1  # Data understanding
-make E2  # Target engineering
-make E3  # Factor analysis (PCA)
-make E4  # Clustering
-
-# Limpiar archivos generados
-make clean
-
-# Subir cambios a GitHub
-make upload
-```
-
-### Ejecución manual
-```bash
-python src/01_data_understanding.py
-python src/02_target_engineering.py
-python src/03_factor_analysis.py
-python src/04_clustering.py
-python src/05_Upz.py
-```
-
----
-
-## 📦 Dependencias
-```
-pandas>=2.0.0
-numpy>=1.24.0
-matplotlib>=3.7.0
-seaborn>=0.12.0
-scikit-learn>=1.3.0
-pyarrow>=12.0.0
-openpyxl>=3.1.0
-statsmodels>=0.14.0
-geopandas>=0.13.0
-```
-
----
-
 ## 📊 Salidas del Proyecto
 
 ### Datos Procesados
@@ -300,6 +243,14 @@ geopandas>=0.13.0
 - `data/processed/target_trabaja.parquet` - Variable objetivo (trabaja 0/1)
 - `data/processed/factor_scores.parquet` - Scores de 10 componentes principales
 - `data/processed/cluster_assign.parquet` - Asignación de clusters (k=4)
+
+### Visualizaciones Clave
+
+| Análisis | Visualización |
+|----------|---------------|
+| **PCA** | ![Scree](reports/figures/scree_pca.png) |
+| **Clustering** | ![Clusters 2D](reports/figures/clusters_2d.png) |
+| **Selección k** | ![Métricas](reports/figures/clustering_analysis.png) |
 
 ### Reportes de Análisis
 - `reports/data_summary.txt` - Resumen de datos y conteos territoriales
@@ -315,7 +266,7 @@ geopandas>=0.13.0
 - `reports/cross/localidades.csv` - Conteos por localidad
 - `reports/cross/upz.csv` - Conteos por UPZ
 
-### Análisis Territorial (29 archivos)
+### Análisis Territorial
 **Directorio:** `reports/analisis_prevalencias_output/`
 
 - `heatmap_prevalence_territorio_periodo.csv` - Matriz Localidad × Periodo
@@ -325,16 +276,9 @@ geopandas>=0.13.0
 - `prevalencia_localidad_cluster.csv` - Tasas agregadas por cluster
 - 24 gráficos PNG de prevalencias por localidad y periodo
 
-### Visualizaciones (29 PNG)
-- `reports/figures/scree_pca.png` - Varianza explicada por componente
-- `reports/figures/biplot_pca.png` - Proyección PC1 vs PC2
-- `reports/figures/clusters_2d.png` - Visualización de clusters
-- `reports/figures/clustering_analysis.png` - Selección de k óptimo
-- `reports/analisis_prevalencias_output/*.png` - Mapas de calor por territorio
-
 ---
 
-## 🔬 Métodos Estadísticos Utilizados
+## Métodos Estadísticos Utilizados
 
 ### Intervalos de Confianza (Wilson)
 ```
@@ -376,7 +320,7 @@ PC = eigenvectors(Cov(X_std))
 
 ---
 
-## ⚠️ Limitaciones y Consideraciones
+## Limitaciones y Consideraciones
 
 ### Alcance del Análisis
 1. **No es inferencia poblacional:** Resultados aplican solo a NNA atendidos por el programa, no a toda la población infantil de Bogotá
@@ -397,39 +341,10 @@ PC = eigenvectors(Cov(X_std))
 1. **Mapas vectoriales:** Shapefile incompleto (faltan .dbf, .shx) - solo visualizaciones rasterizadas
 2. **Un periodo sin χ²:** sep09_2022_mar2023 carece de estructura válida para contraste
 
----
-
-## 🎯 Decisiones que Habilita
-
-### Priorización Territorial
-1. **Inmediata:** Intervenciones focalizadas en Los Mártires (54.2%), Santa Fe (75.2%), Candelaria (76.9%)
-2. **Benchmarking:** Documentar mejores prácticas de Usme (94.9%), Engativá (92.4%), Suba (92.3%)
-
-### Gestión de Recursos
-1. Asignar equipos de seguimiento a Cluster 0 (80% desvinculación vs. 86% en C1-C3)
-2. Aumentar frecuencia de contactos en territorios con χ² alto y prevalencia baja
-
-### Monitoreo y Control
-1. Tablero con prevalencias, IC Wilson y n por Localidad × Periodo
-2. Alertas automáticas cuando una celda cae >2 SD del promedio histórico
-3. Verificación de calidad de campo "desvinculado" (fuente del 98.9% del etiquetado)
-
-### Evaluación de Política
-1. Comparación pre-post por localidad (requiere series temporales más largas)
-2. Análisis de tiempo a desvinculación (requiere modelado de supervivencia)
 
 ---
 
-## 🔐 Consideraciones Éticas y de Privacidad
-
-1. **Datos anonimizados:** Sin nombres, documentos ni direcciones exactas en las salidas
-2. **Uso exclusivo:** Protección de NNA y mejora de intervenciones
-3. **Gobernanza:** Control de accesos según roles institucionales
-4. **Transparencia metodológica:** Código y decisiones completamente trazables
-
----
-
-## 📚 Referencias Metodológicas
+## Referencias Metodológicas
 
 ### CRISP-DM
 - Chapman, P., et al. (2000). *CRISP-DM 1.0: Step-by-step data mining guide*. SPSS Inc.
@@ -445,27 +360,7 @@ PC = eigenvectors(Cov(X_std))
 
 ---
 
-## 👥 Equipo
-
-- **Angela Rico** - Análisis de datos y desarrollo del pipeline
-
----
-
-## 📝 Licencia
-
-Este proyecto es para fines académicos y de investigación en el marco del programa de protección de NNA de la Secretaría Distrital de Salud de Bogotá.
-
----
-
-## 📞 Contacto
-
-Para preguntas sobre metodología, datos o resultados:
-- GitHub: [@Angela-Rico](https://github.com/Angela-Rico)
-- Repositorio: [NNA_7](https://github.com/Angela-Rico/NNA_7)
-
----
-
-## 🎓 Conclusiones
+## Conclusiones
 
 ### Hallazgos Principales
 
@@ -510,20 +405,3 @@ Para preguntas sobre metodología, datos o resultados:
    - Tablero en tiempo real con alertas territoriales
    - Protocolos diferenciados por cluster
    - Evaluación de impacto con diseño cuasi-experimental
-
----
-
-## 🔄 Historial de Versiones
-
-- **v1.0** (2025-01-16): Release inicial con pipeline completo CRISP-DM
-  - Data understanding, target engineering, PCA, clustering y análisis territorial
-  - 56,473 registros procesados, 4 clusters identificados, 29 visualizaciones generadas
-
----
-
-**Nota final:** Este README condensa información de análisis exploratorio, diseño metodológico, resultados cuantitativos y limitaciones. Todos los números y conclusiones están respaldados por archivos en `reports/` y son reproducibles ejecutando el pipeline con `make run`.
-EOF
-
-git add README.md
-git commit -m "📚 README completo con metodología CRISP-DM, resultados y conclusiones"
-git push origin main
