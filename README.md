@@ -203,14 +203,16 @@ Chi-cuadrado de independencia por periodo:
 
 #### **Rankings Territoriales (n ≥ 100)**
 
+![Mapa de calor](reports/analisis_prevalencias_output/prevalencia_cluster_periodo_MARZO2023_NOVI%202024)
+
 **MARZO 2023 - NOVIEMBRE 2024:**
 
-**Mejor desempeño:**
+**Requieren atención:**
 - Usme: 94.9% (n=1,358)
 - Engativá: 92.4% (n=1,318)
 - Suba: 92.3% (n=1,883)
 
-**Requieren atención:**
+**Mejor desempeño:**
 - Rafael Uribe Uribe: 64.3% (n=1,394)
 - Candelaria: 67.0% (n=197)
 - San Cristóbal: 68.1% (n=1,268)
@@ -218,15 +220,20 @@ Chi-cuadrado de independencia por periodo:
 
 **DICIEMBRE 2024 - MARZO 2025:**
 
-**Mejor desempeño:**
+**Requieren atención:**
 - Usme: 100.0% (n=105)
 - Engativá: 94.5% (n=109)
 - Bosa: 86.3% (n=423)
 
-**Requieren atención:**
+**Mejor desempeño:**
 - Los Mártires: 54.2% (n=118) **crítico**
 - Santa Fe: 75.2% (n=121)
 - Candelaria: 76.9% (n=186)
+
+![Prevalencia Cluster](reports/analisis_prevalencias_output/prevalencia_cluster_periodo_MARZO2023_NOVI%202024.png)
+![Prevalencia Santa fe](reports/analisis_prevalencias_output/prevalencia_cluster_periodo_Santa%20fe.png)
+![Prevalencia Engativá](reports/analisis_prevalencias_output/prevalencia_cluster_periodo_Engativá.png)
+![Prevalencia Suba](reports/analisis_prevalencias_output/prevalencia_cluster_periodo_Suba.png)
 
 **Patrones consistentes:**
 - **Altas consistentemente:** Usme, Suba, Engativá
