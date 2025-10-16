@@ -57,7 +57,6 @@ def fix_mixed_types(df):
     """Convierte columnas con tipos mixtos a string"""
     for col in df.columns:
         if df[col].dtype == 'object':
-            # Convertir todo a string para evitar problemas con Parquet
             df[col] = df[col].astype(str).replace('nan', np.nan)
     return df
 
@@ -65,11 +64,9 @@ def infer_territorio(df):
     """Infiere columnas de territorio"""
     out = df.copy()
     
-    # Buscar columnas relacionadas
     loc_candidates = [c for c in out.columns if 'localidad' in c.lower()]
     upz_candidates = [c for c in out.columns if 'upz' in c.lower()]
     
-    # Estandarizar localidad
     if loc_candidates:
         loc_col = loc_candidates[0]
         out['localidad'] = out[loc_col].astype(str).str.strip()
@@ -78,7 +75,6 @@ def infer_territorio(df):
         out['localidad'] = 'No especificada'
         loc_std = pd.Series({'No especificada': len(out)})
     
-    # Estandarizar UPZ
     if upz_candidates:
         upz_col = upz_candidates[0]
         out['upz'] = out[upz_col].astype(str).str.strip()
@@ -94,7 +90,6 @@ def analyze_demographics(df):
     print("\n👥 ANÁLISIS DEMOGRÁFICO")
     print("=" * 50)
     
-    # Buscar columnas demográficas
     edad_cols = [c for c in df.columns if 'edad' in c.lower()]
     genero_cols = [c for c in df.columns if any(x in c.lower() for x in ['genero', 'sexo'])]
     
@@ -116,13 +111,9 @@ def analyze_demographics(df):
 
 def main():
     """Ejecuta análisis completo"""
-    # 1. Cargar
     df = load_data()
-    
-    # 2. Limpiar columnas
     df = clean_columns(df)
     
-    # 3. Info básica
     print(f"\n📋 INFORMACIÓN BÁSICA")
     print("=" * 50)
     print(f"Dimensiones: {df.shape[0]:,} filas × {df.shape[1]} columnas")
@@ -130,7 +121,6 @@ def main():
     for i, col in enumerate(df.columns, 1):
         print(f"  {i:2d}. {col}")
     
-    # 4. Territorio
     print(f"\n🗺️  ANÁLISIS TERRITORIAL")
     print("=" * 50)
     df, loc_counts, upz_counts = infer_territorio(df)
@@ -141,10 +131,8 @@ def main():
     print("\n📍 Top 10 UPZ:")
     print(upz_counts.head(10))
     
-    # 5. Demografía
     demo_results = analyze_demographics(df)
     
-    # 6. Valores faltantes
     print(f"\n❓ VALORES FALTANTES")
     print("=" * 50)
     missing = df.isnull().sum()
@@ -160,34 +148,28 @@ def main():
     else:
         print("✅ No hay valores faltantes")
     
-    # 7. Arreglar tipos mixtos antes de guardar
     print(f"\n🔧 PREPARANDO DATOS PARA GUARDAR")
     print("=" * 50)
     df = fix_mixed_types(df)
     print("✅ Tipos de datos estandarizados")
     
-    # 8. Guardar
     print(f"\n💾 GUARDANDO RESULTADOS")
     print("=" * 50)
     
     Path("data/processed").mkdir(parents=True, exist_ok=True)
     Path("reports/cross").mkdir(parents=True, exist_ok=True)
     
-    # Guardar base limpia en Parquet
     df.to_parquet("data/processed/base_clean.parquet", index=False)
     print("✅ data/processed/base_clean.parquet")
     
-    # También guardar en CSV por si acaso
     df.to_csv("data/processed/base_clean.csv", index=False)
     print("✅ data/processed/base_clean.csv")
     
-    # Guardar conteos
     loc_counts.to_csv("reports/cross/localidades.csv")
     upz_counts.to_csv("reports/cross/upz.csv")
     print("✅ reports/cross/localidades.csv")
     print("✅ reports/cross/upz.csv")
     
-    # Resumen
     with open("reports/data_summary.txt", "w", encoding="utf-8") as f:
         f.write("RESUMEN DE DATOS NNA\n")
         f.write("=" * 60 + "\n\n")
@@ -200,7 +182,7 @@ def main():
             f.write(f"  - {loc}: {count:,}\n")
     
     print("✅ reports/data_summary.txt")
-    print("\n�� ¡Análisis completado exitosamente!")
+    print("\n🎉 ¡Análisis completado exitosamente!")
     print(f"\n📊 Resumen:")
     print(f"   • {len(df):,} registros procesados")
     print(f"   • {df.shape[1]} variables")
