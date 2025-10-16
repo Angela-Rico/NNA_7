@@ -1,0 +1,13 @@
+REPORTE DE CLUSTERING
+============================================================
+
+Método: K-Medoids
+Número óptimo de clusters: 4
+Silhouette score: 0.367
+Observaciones: 56,473
+
+Distribución de clusters:
+  Cluster 0: 28,226 ( 50.0%)
+  Cluster 1:  8,986 ( 15.9%)
+  Cluster 2:  8,072 ( 14.3%)
+  Cluster 3: 11,189 ( 19.8%)

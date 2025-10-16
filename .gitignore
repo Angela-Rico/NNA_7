@@ -1,0 +1,35 @@
+# Archivos de datos
+data/raw/*.xlsx
+data/raw/*.xls
+data/raw/*.csv
+data/processed/*.parquet
+data/processed/*.csv
+
+# Archivos temporales
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Mantener estructura de carpetas
+!.gitkeep

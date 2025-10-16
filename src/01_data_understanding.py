@@ -1,119 +1,211 @@
 #!/usr/bin/env python
-import os, re, json, argparse
-import numpy as np, pandas as pd
+# -*- coding: utf-8 -*-
+"""
+Análisis exploratorio de datos NNA
+"""
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+from pathlib import Path
 
-PII_PAT = re.compile(r'(nombre|apellido|documento|direccion|tel|cel|correo|email)', re.I)
-NA_CODES = {99999, 98, 99, "98", "99", "99999", "", "NA", "N/A", None}
+# Configuración
+plt.style.use('seaborn-v0_8-darkgrid')
+sns.set_palette("husl")
 
-def ensure_dirs():
-    for d in ["reports","reports/figures","reports/cross","data/processed"]:
-        os.makedirs(d, exist_ok=True)
+def load_data():
+    """Carga datos desde Excel"""
+    print("📂 Cargando datos...")
+    raw_path = Path("data/raw")
+    
+    files = list(raw_path.glob("*.xlsx")) + list(raw_path.glob("*.xls"))
+    if not files:
+        raise FileNotFoundError("No hay archivos Excel en data/raw/")
+    
+    dfs = []
+    for file in files:
+        print(f"  ↳ {file.name}")
+        try:
+            df = pd.read_excel(file)
+            dfs.append(df)
+        except Exception as e:
+            print(f"    ⚠️  Error: {e}")
+    
+    if not dfs:
+        raise ValueError("No se pudo cargar ningún archivo")
+    
+    df = pd.concat(dfs, ignore_index=True)
+    print(f"✅ Cargados {len(df):,} registros de {len(dfs)} archivo(s)")
+    return df
 
-def normalize_cols(df):
-    cols = (df.columns
-            .str.strip().str.replace(r"\s+", " ", regex=True)
-            .str.lower().str.replace(" ", "_"))
-    out = df.copy(); out.columns = cols; return out
+def clean_columns(df):
+    """Limpia nombres de columnas"""
+    df.columns = (df.columns
+                  .str.strip()
+                  .str.lower()
+                  .str.replace(r'\s+', '_', regex=True)
+                  .str.replace(r'[áàâã]', 'a', regex=True)
+                  .str.replace(r'[éèê]', 'e', regex=True)
+                  .str.replace(r'[íìî]', 'i', regex=True)
+                  .str.replace(r'[óòôõ]', 'o', regex=True)
+                  .str.replace(r'[úùû]', 'u', regex=True)
+                  .str.replace(r'ñ', 'n', regex=True)
+                  .str.replace(r'[^\w]', '_', regex=True))
+    return df
 
-def drop_pii(df):
-    keep = [c for c in df.columns if not PII_PAT.search(c)]
-    return df[keep]
-
-def recode_na(df):
-    return df.applymap(lambda x: (np.nan if (pd.isna(x) or x in NA_CODES) else x))
-
-def plot_missing(df, out_png):
-    miss = df.isna().mean().sort_values(ascending=False).head(50)
-    plt.figure(); miss.plot(kind="bar"); plt.title("Faltantes por columna")
-    plt.ylabel("Proporción"); plt.tight_layout(); plt.savefig(out_png); plt.close()
-
-def plot_corr(df, out_png):
-    num = df.select_dtypes(include=[np.number])
-    if num.shape[1] < 2: return
-    corr = num.corr(numeric_only=True)
-    plt.figure(); plt.imshow(corr.values, interpolation="nearest")
-    plt.xticks(range(len(corr.columns)), corr.columns, rotation=90)
-    plt.yticks(range(len(corr.columns)), corr.columns)
-    plt.title("Matriz de correlación"); plt.colorbar(); plt.tight_layout()
-    plt.savefig(out_png); plt.close()
-
-def infer_period(df):
-    fecha_cols = [c for c in df.columns if "fecha" in c]
-    if not fecha_cols: return df
-    fc = fecha_cols[0]
-    dts = pd.to_datetime(df[fc], errors="coerce")
-    df["periodo"] = dts.dt.to_period("M").astype(str)
+def fix_mixed_types(df):
+    """Convierte columnas con tipos mixtos a string"""
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            # Convertir todo a string para evitar problemas con Parquet
+            df[col] = df[col].astype(str).replace('nan', np.nan)
     return df
 
 def infer_territorio(df):
-    if "localidad" not in df.columns:
-        cand = [c for c in df.columns if "localidad" in c]
-        if cand: df = df.rename(columns={cand[0]: "localidad"})
-    if "upz" not in df.columns:
-        cand = [c for c in df.columns if c.startswith("upz")]
-        if cand: df = df.rename(columns={cand[0]: "upz"})
-    return df
+    """Infiere columnas de territorio"""
+    out = df.copy()
+    
+    # Buscar columnas relacionadas
+    loc_candidates = [c for c in out.columns if 'localidad' in c.lower()]
+    upz_candidates = [c for c in out.columns if 'upz' in c.lower()]
+    
+    # Estandarizar localidad
+    if loc_candidates:
+        loc_col = loc_candidates[0]
+        out['localidad'] = out[loc_col].astype(str).str.strip()
+        loc_std = out['localidad'].value_counts()
+    else:
+        out['localidad'] = 'No especificada'
+        loc_std = pd.Series({'No especificada': len(out)})
+    
+    # Estandarizar UPZ
+    if upz_candidates:
+        upz_col = upz_candidates[0]
+        out['upz'] = out[upz_col].astype(str).str.strip()
+        upz_std = out['upz'].value_counts()
+    else:
+        out['upz'] = 'No especificada'
+        upz_std = pd.Series({'No especificada': len(out)})
+    
+    return out, loc_std, upz_std
+
+def analyze_demographics(df):
+    """Análisis demográfico básico"""
+    print("\n👥 ANÁLISIS DEMOGRÁFICO")
+    print("=" * 50)
+    
+    # Buscar columnas demográficas
+    edad_cols = [c for c in df.columns if 'edad' in c.lower()]
+    genero_cols = [c for c in df.columns if any(x in c.lower() for x in ['genero', 'sexo'])]
+    
+    results = {}
+    
+    if edad_cols:
+        edad_col = edad_cols[0]
+        print(f"\n📊 Edad (columna: {edad_col}):")
+        print(df[edad_col].describe())
+        results['edad'] = df[edad_col].value_counts().head(10)
+    
+    if genero_cols:
+        genero_col = genero_cols[0]
+        print(f"\n⚧ Género (columna: {genero_col}):")
+        print(df[genero_col].value_counts())
+        results['genero'] = df[genero_col].value_counts()
+    
+    return results
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--input", required=True)
-    ap.add_argument("--sheet", default=None)
-    args = ap.parse_args()
-    ensure_dirs()
-
-    # carga
-    if args.input.lower().endswith((".xls", ".xlsx")):
-        df = pd.read_excel(args.input, sheet_name=args.sheet)
-    else:
-        df = pd.read_csv(args.input)
-
-    # limpieza base
-    df = normalize_cols(df)
-    df = recode_na(df)
-    df = drop_pii(df)
-
-    # filtro 5–17 si existe edad*
-    edad_col = next((c for c in df.columns if c.startswith("edad")), None)
-    if edad_col is not None:
-        df[edad_col] = pd.to_numeric(df[edad_col], errors="coerce")
-        df = df[df[edad_col].between(5,17)]
-
-    # id estable
-    df = df.reset_index(drop=True)
-    df.insert(0, "row_id", df.index.astype(int))
-
-    # extras útiles
-    df = infer_period(df)
-    df = infer_territorio(df)
-
-    # diccionario + calidad
-    dd = pd.DataFrame({
-        "column": df.columns,
-        "dtype": [str(t) for t in df.dtypes],
-        "non_null": df.notna().sum().values,
-        "nulls": df.isna().sum().values,
-        "null_pct": (df.isna().mean().values*100).round(2),
-        "n_unique": df.nunique(dropna=True).values
+    """Ejecuta análisis completo"""
+    # 1. Cargar
+    df = load_data()
+    
+    # 2. Limpiar columnas
+    df = clean_columns(df)
+    
+    # 3. Info básica
+    print(f"\n📋 INFORMACIÓN BÁSICA")
+    print("=" * 50)
+    print(f"Dimensiones: {df.shape[0]:,} filas × {df.shape[1]} columnas")
+    print(f"\nColumnas disponibles:")
+    for i, col in enumerate(df.columns, 1):
+        print(f"  {i:2d}. {col}")
+    
+    # 4. Territorio
+    print(f"\n🗺️  ANÁLISIS TERRITORIAL")
+    print("=" * 50)
+    df, loc_counts, upz_counts = infer_territorio(df)
+    
+    print("\n📍 Top 10 Localidades:")
+    print(loc_counts.head(10))
+    
+    print("\n📍 Top 10 UPZ:")
+    print(upz_counts.head(10))
+    
+    # 5. Demografía
+    demo_results = analyze_demographics(df)
+    
+    # 6. Valores faltantes
+    print(f"\n❓ VALORES FALTANTES")
+    print("=" * 50)
+    missing = df.isnull().sum()
+    missing_pct = (missing / len(df) * 100).round(2)
+    missing_df = pd.DataFrame({
+        'faltantes': missing,
+        'porcentaje': missing_pct
     })
-    dd.to_csv("reports/data_dictionary.csv", index=False)
-
-    flags = {
-        "rows": int(df.shape[0]), "cols": int(df.shape[1]),
-        "duplicate_rows": int(df.duplicated().sum()),
-        "constant_like": [c for c in df.columns
-                          if (df[c].value_counts(normalize=True, dropna=True).head(1).sum()>=0.99)],
-        "candidate_ids": [c for c in df.columns if df[c].is_unique]
-    }
-    json.dump(flags, open("reports/quality_flags.json","w"), ensure_ascii=False, indent=2)
-
-    # gráficos rápidos
-    plot_missing(df, "reports/figures/missing_bar.png")
-    plot_corr(df, "reports/figures/corr_matrix.png")
-
-    # guarda base limpia
+    missing_df = missing_df[missing_df['faltantes'] > 0].sort_values('faltantes', ascending=False)
+    
+    if len(missing_df) > 0:
+        print(missing_df.head(15))
+    else:
+        print("✅ No hay valores faltantes")
+    
+    # 7. Arreglar tipos mixtos antes de guardar
+    print(f"\n🔧 PREPARANDO DATOS PARA GUARDAR")
+    print("=" * 50)
+    df = fix_mixed_types(df)
+    print("✅ Tipos de datos estandarizados")
+    
+    # 8. Guardar
+    print(f"\n💾 GUARDANDO RESULTADOS")
+    print("=" * 50)
+    
+    Path("data/processed").mkdir(parents=True, exist_ok=True)
+    Path("reports/cross").mkdir(parents=True, exist_ok=True)
+    
+    # Guardar base limpia en Parquet
     df.to_parquet("data/processed/base_clean.parquet", index=False)
-    print("[E1] OK → data/processed/base_clean.parquet")
+    print("✅ data/processed/base_clean.parquet")
+    
+    # También guardar en CSV por si acaso
+    df.to_csv("data/processed/base_clean.csv", index=False)
+    print("✅ data/processed/base_clean.csv")
+    
+    # Guardar conteos
+    loc_counts.to_csv("reports/cross/localidades.csv")
+    upz_counts.to_csv("reports/cross/upz.csv")
+    print("✅ reports/cross/localidades.csv")
+    print("✅ reports/cross/upz.csv")
+    
+    # Resumen
+    with open("reports/data_summary.txt", "w", encoding="utf-8") as f:
+        f.write("RESUMEN DE DATOS NNA\n")
+        f.write("=" * 60 + "\n\n")
+        f.write(f"Total registros: {len(df):,}\n")
+        f.write(f"Total columnas: {df.shape[1]}\n")
+        f.write(f"Localidades únicas: {df['localidad'].nunique()}\n")
+        f.write(f"UPZ únicas: {df['upz'].nunique()}\n\n")
+        f.write("Top 10 Localidades:\n")
+        for loc, count in loc_counts.head(10).items():
+            f.write(f"  - {loc}: {count:,}\n")
+    
+    print("✅ reports/data_summary.txt")
+    print("\n�� ¡Análisis completado exitosamente!")
+    print(f"\n📊 Resumen:")
+    print(f"   • {len(df):,} registros procesados")
+    print(f"   • {df.shape[1]} variables")
+    print(f"   • {df['localidad'].nunique()} localidades")
+    print(f"   • {df['upz'].nunique()} UPZ")
 
 if __name__ == "__main__":
     main()

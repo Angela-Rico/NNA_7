@@ -1,0 +1,13 @@
+{
+  "trabaja_explicit_cols": [
+    "_en_donde_realiza_principalmente_su_trabajo_"
+  ],
+  "trabajo_protegido_cols": [
+    "adolescente_trabajo_protegido",
+    "adolescente_trabajo_protegido_1"
+  ],
+  "desvinculado_cols": [
+    "nna_desvinculado_de_la_actividad_laboral",
+    "nna_desvinculado_de_la_actividad_laboral_1"
+  ]
+}

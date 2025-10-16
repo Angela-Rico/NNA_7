@@ -1,0 +1,27 @@
+REPORTE DE ANÁLISIS FACTORIAL (PCA)
+============================================================
+
+Variables analizadas: 21
+  • Numéricas: 3
+  • Categóricas codificadas: 18
+Observaciones: 56,473
+Componentes: 10
+
+Varianza explicada:
+  PC1: 33.42% (acum: 33.42%)
+  PC2: 11.43% (acum: 44.84%)
+  PC3:  9.09% (acum: 53.93%)
+  PC4:  8.38% (acum: 62.31%)
+  PC5:  7.09% (acum: 69.39%)
+  PC6:  5.45% (acum: 74.84%)
+  PC7:  4.74% (acum: 79.58%)
+  PC8:  4.35% (acum: 83.93%)
+  PC9:  3.33% (acum: 87.26%)
+  PC10:  2.67% (acum: 89.93%)
+
+Top 5 cargas PC1:
+  • estrato_encoded: 0.333
+  • genero_encoded: 0.308
+  • ocupacion_encoded: 0.300
+  • base_origen_encoded: 0.297
+  • intervencion_de_nino__nina_o_adolescente_que_termina_el_proceso_encoded: -0.297

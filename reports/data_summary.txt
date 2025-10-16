@@ -1,0 +1,19 @@
+RESUMEN DE DATOS NNA
+============================================================
+
+Total registros: 56,473
+Total columnas: 48
+Localidades únicas: 20
+UPZ únicas: 119
+
+Top 10 Localidades:
+  - Ciudad Bolívar: 7,957
+  - Bosa: 5,774
+  - Kennedy: 5,431
+  - Suba: 4,931
+  - Usme: 3,930
+  - Engativá: 3,810
+  - Rafael Uribe Uribe: 3,168
+  - Los Mártires: 3,161
+  - San Cristóbal: 3,106
+  - Santa fe: 2,809

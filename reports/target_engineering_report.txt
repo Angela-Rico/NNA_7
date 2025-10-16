@@ -1,0 +1,14 @@
+REPORTE DE INGENIERÍA DE VARIABLE OBJETIVO
+============================================================
+
+Total registros: 56,473
+
+Distribución de la variable 'trabaja':
+  • Sí trabaja (1): 7,689 (13.6%)
+  • No trabaja (0): 36,609 (64.8%)
+  • Sin datos:      12,175 (21.6%)
+
+Origen de la información:
+  1. Trabajo explícito:     0
+  2. Trabajo protegido:     26
+  3. Inferido desvinculado: 44,272
