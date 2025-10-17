@@ -229,10 +229,19 @@ Chi-cuadrado de independencia por periodo:
 - Los Mártires: 54.2% (n=118) **crítico**
 - Santa Fe: 75.2% (n=121)
 - Candelaria: 76.9% (n=186)
-
+#### Prevalencia Cluster
 ![Prevalencia Cluster](reports/analisis_prevalencias_output/prevalencia_cluster_periodo_MARZO2023_NOVI%202024.png)
+
+#### Prevalencia Santa fe
+
 ![Prevalencia Santa fe](reports/analisis_prevalencias_output/prevalencia_cluster_periodo_Santa%20fe.png)
+
+#### Prevalencia Engativá
+
 ![Prevalencia Engativá](reports/analisis_prevalencias_output/prevalencia_cluster_periodo_Engativá.png)
+
+##### Prevalencia Suba
+
 ![Prevalencia Suba](reports/analisis_prevalencias_output/prevalencia_cluster_periodo_Suba.png)
 
 **Patrones consistentes:**
