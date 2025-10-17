@@ -203,7 +203,7 @@ Chi-cuadrado de independencia por periodo:
 
 #### **Rankings Territoriales (n ≥ 100)**
 
-![Mapa de calor](reports/analisis_prevalencias_output/prevalencia_cluster_periodo_MARZO2023_NOVI%202024)
+![Mapa de calor](reports/analisis_prevalencias_output/prevalencia_cluster_periodo_MARZO2023_NOVI%2024.png)
 
 **MARZO 2023 - NOVIEMBRE 2024:**
 
